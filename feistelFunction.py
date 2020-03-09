@@ -20,27 +20,7 @@ def feistelFunc(block, left_key, right_key):
             temp = (block[i]&mask) << (8-stride)
             block[i] = (block[i] >> stride) + temp
 
-        # Do column confusion
-        array_of_bits = []
-        for row in range(0,len(block)):
-            array_of_bits.append([bool((0x80 >> i)&block[row]) for i in range(0,8)])
-
         
-
-        # Column confusion
-        # For each column in 
-        for column in range(0,len(block)):
-            # Get value of column
-            col_value = 0
-            for row in range(0,len(block)):
-                col_value = col_value + (array_of_bits[row][column]<< (len(block)-1-row))
-            
-            # col value should be :
-            col_value = (col_value + left_key[column])%256
-
-            # Redistribute value
-            for row in range(0,len(block)) :
-                array_of_bits[row][column] = bool(col_value >> (len(block)-1))
 
         
         # Switch row
@@ -60,28 +40,6 @@ def inverseFeistelFunc(block, left_key, right_key) :
         for row in range(len(block)-1,0,-1):
             block[row] = block[row-1]
         block[0] = temp
-
-
-        # Reverse column confusion
-        array_of_bits = []
-        for row in range(0,len(block)):
-            array_of_bits.append([bool((0x80 >> i)&block[row]) for i in range(0,8)])
-
-
-        # Column confusion
-        # For each column in 
-        for column in range(0,len(block)):
-            # Get value of column
-            col_value = 0
-            for row in range(0,len(block)):
-                col_value = col_value + (array_of_bits[row][column]<< (len(block)-1-row))
-            
-            # col value should be :
-            col_value = (col_value - left_key[column])%256
-
-            # Redistribute value
-            for row in range(0,len(block)) :
-                array_of_bits[row][column] = bool(col_value >> (len(block)-1))
 
 
         # Do row addition and wrapping shift
