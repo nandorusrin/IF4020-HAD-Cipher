@@ -138,7 +138,7 @@ def inverseFeistelFunc(block, left_key, right_key) :
 
 def main():
 
-    block = bytearray("12345679","ascii")
+    block = bytearray("12345678","ascii")
     right_key = bytearray("12345678","ascii")
     left_key = bytearray("12345678","ascii")
 
