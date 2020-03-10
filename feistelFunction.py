@@ -20,7 +20,28 @@ def feistelFunc(block, left_key, right_key):
             temp = (block[i]&mask) << (8-stride)
             block[i] = (block[i] >> stride) + temp
 
-        
+        # Column confusion
+
+        for col in range(0,len(block)):
+
+            # Get column value
+            col_value = 0
+            mask = 0x1<<(7-col)
+            for row in range(0,len(block)) :
+                XORed_value = mask&block[row]
+                temp_value = XORed_value>>(7-col)
+                col_value = col_value + (temp_value<<(7-row))
+
+            # Addition
+            col_value = (col_value + left_key[col])%256
+
+            # Redistribute
+            mask = 0xFF>>(col+1)
+            mask += (0xFF << (len(block)-col))&0xFF
+            for row in range(0,len(block)) :
+                block[row] = block[row]&mask
+                bit_value = ((col_value<<row)&0x80)>>col
+                block[row] = block[row] + (bit_value)
 
         
         # Switch row
