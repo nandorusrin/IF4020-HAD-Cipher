@@ -135,13 +135,8 @@ if __name__ == '__main__':
     cipherMachine = FeistelNetwork(key=bytearray('csdfghjkrwertyuj',"raw_unicode_escape"),f_function = function_class )
     
     
-    
-    for i in cipherMachine.internal_key:
-        print(i)
-        print(len(i))
-    
     print("The plain text is: ")
-    print(message)
+    print(message.decode("raw_unicode_escape"))
     print()
 
     ciphertext = cipherMachine.encrypt_message(message)
