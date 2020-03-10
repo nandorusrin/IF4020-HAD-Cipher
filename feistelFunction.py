@@ -120,7 +120,9 @@ class FeistelFunction :
             block[row] = block[row-1]
         block[0] = temp
 
-    def feistelFunc(self,block, left_key, right_key):
+    def feistelFunc(self, input_block, left_key, right_key):
+
+        block = bytearray(input_block)
 
         for _ in range(len(block)):
 
@@ -128,6 +130,8 @@ class FeistelFunction :
             self.__rowConfusion(block, right_key)
             self.__columnConfusion(block, left_key)
             self.__rowShiftUp(block)
+
+        return block
 
     def inverseFeistelFunc(self,block, left_key, right_key) :
 

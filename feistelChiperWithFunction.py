@@ -3,8 +3,6 @@ from feistelFunction import FeistelFunction
 #     return a^b
 
 def xor(L,R):
-    print(L)
-    print(R)
     return bytearray(a^b for (a,b) in zip(L,R))
 
 class FeistelNetwork:
@@ -44,20 +42,23 @@ class FeistelNetwork:
         # Starting to Encrypt
         for block in splited_message:
 
-            L = block[0:self.block_size//2]
+            L = block[:self.block_size//2]
             R = block[self.block_size//2:]
             
             for i in range(0, self.num_iteration):
+
+
                 key = self.internal_key[i]
                 next_L = R
-                self.f.feistelFunc(R,key[8:],key[:8])
-                next_R = xor(L, R) #bisa diubah tergatung sama fungsi F nya
-
+                R = self.f.feistelFunc(R,key[:8],key[8:])
+                next_R = xor(L, R)
 
                 L = next_L
                 R = next_R
-                
+
+
             ciphertext += L + R
+
         return ciphertext
     
     
@@ -81,14 +82,18 @@ class FeistelNetwork:
             R = block[self.block_size//2:]
             
             for i in range(self.num_iteration, 0, -1):
+ 
+                
                 key = self.internal_key[i-1]
+
                 next_R = L
-                self.f.feistelFunc(L,key[8:],key[:8])
+                L = self.f.feistelFunc(L,key[:8],key[8:])
                 next_L = xor(R, L)
                 
                 R = next_R
                 L = next_L
             
+
             plaintext += L+R
         
         return plaintext
@@ -113,8 +118,9 @@ if __name__ == '__main__':
     print()
 
     ciphertext = cipherMachine.encrypt_message(message)
-    print("The encrypted message is: ")
-    print(ciphertext)
+    ##print("The encrypted message is: ")
+    ##print(ciphertext)
+    print("==========================================================")
     plaintext = cipherMachine.decrypt_cipher(ciphertext)
     print("The decrypted message is: ")
     print(plaintext)
