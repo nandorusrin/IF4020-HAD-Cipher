@@ -16,6 +16,21 @@ def cascadingXOR(block) :
     for row in range(1,len(block)) :
         block[row] = block[row-1]^block[row]
 
+def rowShiftUp(block) :
+    temp = block[0]
+    for i in range(1,len(block)):
+        block[i-1] = block[i]
+    block[len(block)-1] = temp
+
+def rowShiftDown(block) :
+
+    # Switch row
+    temp = block[len(block)-1]
+    for row in range(len(block)-1,0,-1):
+        block[row] = block[row-1]
+    block[0] = temp
+
+
 def feistelFunc(block, left_key, right_key):
 
 
@@ -63,11 +78,7 @@ def feistelFunc(block, left_key, right_key):
                 block[row] = block[row] + (bit_value)
         
 
-        # Switch row
-        temp = block[0]
-        for i in range(1,len(block)):
-            block[i-1] = block[i]
-        block[len(block)-1] = temp
+        rowShiftUp(block)
 
     print(block)
 
@@ -76,13 +87,8 @@ def inverseFeistelFunc(block, left_key, right_key) :
 
 
     for _ in range(len(block)):
-        print(block)
-
-        # Switch row
-        temp = block[len(block)-1]
-        for row in range(len(block)-1,0,-1):
-            block[row] = block[row-1]
-        block[0] = temp
+        
+        rowShiftDown(block)
 
 
 
