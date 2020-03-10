@@ -1,8 +1,8 @@
 class FeistelFunction :
 
     def __init__(self) :
-        pass
 
+        pass
 
     def __rowConfusion(self,block, right_key) :
 
