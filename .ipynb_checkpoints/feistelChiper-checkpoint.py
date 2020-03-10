@@ -1,6 +1,9 @@
-from feistelFunction import FeistelFunction
+
 # def xor_function(a,b):
 #     return a^b
+
+def string_xor(s1,s2):
+    return ''.join(chr(ord(a) ^ ord(b)) for a, b in zip(s1, s2))
 
 
 s_box = [
@@ -22,13 +25,9 @@ s_box = [
     '8c','a1','89','0d','bf','e6','42','68','41','99','2d','0f','b0','54','bb','16'
 ]
 
-def xor(L,R):
-    return bytearray(a^b for (a,b) in zip(L,R))
-
 class FeistelNetwork:
-
     # Fungsi F dibikin jadi input...
-    def __init__(self, key, f_function ,num_iteration = 8, block_size=16):
+    def __init__(self, key, f_function = string_xor,num_iteration = 8, block_size=8):
         self.block_size = block_size
         self.internal_key = []
         self.num_iteration = num_iteration
@@ -46,51 +45,41 @@ class FeistelNetwork:
             self.internal_key.append(new_key)
             prev_key = new_key
             
-            
     def encrypt_message(self, message):
-
-        ciphertext = bytearray()
+        ciphertext=""
         # Split the message intoblocks
         
         splited_message = [message[i:i+self.block_size] for i in range(0,len(message),self.block_size)]
         
-
         # Padding if the last block wasnt enough padding with space.
         lastBlockLen = len(splited_message[-1])
         
         if lastBlockLen < self.block_size:
             for i in range(lastBlockLen, self.block_size):
-                splited_message[-1].append(0x20)
+                splited_message[-1] += ' '
                 
                 
         # Starting to Encrypt
         for block in splited_message:
-
-            L = block[:self.block_size//2]
+            L = block[0:self.block_size//2]
             R = block[self.block_size//2:]
             
-            for i in range(0, self.num_iteration):
-
-
-                key = self.internal_key[i]
+            
+            for i in range(1, self.num_iteration+1):
+                key = self.internal_key[i-1]
                 next_L = R
-                R = self.f.feistelFunc(R,key[:8],key[8:])
-                next_R = xor(L, R)
-
+                next_R = string_xor(L, self.f(R, key)) #bisa diubah tergatung sama fungsi F nya
+                
                 L = next_L
                 R = next_R
-
-
+                
             ciphertext += L + R
-
         return ciphertext
     
     
     def decrypt_cipher(self, cipher):
-
-
-        plaintext = bytearray()
-
+        plaintext = ""
+        
         splited_cipher = [cipher[i:i+self.block_size] for i in range(0,len(cipher),self.block_size)]
         
         # Padding if the last block wasnt enough padding with space.
@@ -98,7 +87,7 @@ class FeistelNetwork:
         
         if lastBlockLen < self.block_size:
             for i in range(lastBlockLen, self.block_size):
-                splited_cipher[-1].append(0x20)
+                splited_cipher[-1] += ' '
                 
  
         for block in splited_cipher:
@@ -106,18 +95,13 @@ class FeistelNetwork:
             R = block[self.block_size//2:]
             
             for i in range(self.num_iteration, 0, -1):
- 
-                
                 key = self.internal_key[i-1]
-
                 next_R = L
-                L = self.f.feistelFunc(L,key[:8],key[8:])
-                next_L = xor(R, L)
+                next_L = string_xor(R, self.f(L,key))
                 
                 R = next_R
                 L = next_L
             
-
             plaintext += L+R
         
         return plaintext
@@ -127,20 +111,14 @@ class FeistelNetwork:
 
         
 if __name__ == '__main__':
-
-
     print("Fiestel CHIPER TESTING")
 
-    function_class = FeistelFunction()
-
-    message = bytearray("THIS MESSAGE WILL BE ENCRYPTED","ascii")
-    cipherMachine = FeistelNetwork(key=bytearray('asdfghjkqwertyui',"ascii"),f_function = function_class )
+    message = "THIS MESSAGE WILL BE ENCRYPTED"
+    cipherMachine = FeistelNetwork(key='abcd')
     
     
+    print(cipherMachine.internal_key)
     
-    for i in cipherMachine.internal_key:
-        print(i)
-        print(len(i))
     
     print("The plain text is: ")
     print(message)
@@ -149,7 +127,7 @@ if __name__ == '__main__':
     ciphertext = cipherMachine.encrypt_message(message)
     print("The encrypted message is: ")
     print(ciphertext)
-    print("==========================================================")
+    print()
     plaintext = cipherMachine.decrypt_cipher(ciphertext)
     print("The decrypted message is: ")
     print(plaintext)
