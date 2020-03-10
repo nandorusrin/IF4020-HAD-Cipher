@@ -3,8 +3,8 @@
 def feistelFunc(block, left_key, right_key):
 
 
-
     for _ in range(len(block)):
+        print(block)
 
         # Cascading XOR
         for i in range(1,len(block)):
@@ -21,8 +21,7 @@ def feistelFunc(block, left_key, right_key):
             block[i] = (block[i] >> stride) + temp
 
         # Column confusion
-
-        for col in range(0,len(block)):
+        for col in range(0,1):
 
             # Get column value
             col_value = 0
@@ -33,7 +32,79 @@ def feistelFunc(block, left_key, right_key):
                 col_value = col_value + (temp_value<<(7-row))
 
             # Addition
+
             col_value = (col_value + left_key[col])%256
+
+
+            # wrapping shift
+            stride = left_key[col]%8
+            mask = 0xFF >> (8-stride)
+            temp = (col_value&mask) << (8-stride)
+            col_value = (col_value >> stride) + temp
+
+            # Redistribute
+
+            # Lower 1s
+            mask = 0xFF>>(col+1)
+
+            # Upper 1s
+            mask += (0xFF << (len(block)-col))&0xFF
+
+            for row in range(0,len(block)) :
+                block[row] = block[row]&mask
+                bit_value = ((col_value<<row)&0x80)>>col
+                block[row] = block[row] + (bit_value)
+        
+
+        # Switch row
+        temp = block[0]
+        for i in range(1,len(block)):
+            block[i-1] = block[i]
+        block[len(block)-1] = temp
+
+    print(block)
+
+
+def inverseFeistelFunc(block, left_key, right_key) :
+
+
+    for _ in range(len(block)):
+        print(block)
+
+        # Switch row
+        temp = block[len(block)-1]
+        for row in range(len(block)-1,0,-1):
+            block[row] = block[row-1]
+        block[0] = temp
+
+
+
+        # Revert column
+        for col in range(0,1):
+
+            # Get column value
+            col_value = 0
+            mask = 0x1<<(7-col)
+            for row in range(0,len(block)) :
+
+                # Get block[row][col bit], put in XORed
+                XORed_value = mask & block[row]
+
+                # Shift, so value equals one (0x01)
+                temp_value = XORed_value>>(7-col)
+                col_value = col_value + (temp_value<<(7-row))
+
+
+
+
+            # wrapping shift
+            stride = 8 - left_key[col]%8
+            mask = 0xFF >> (8-stride)
+            temp = (col_value&mask) << (8-stride)
+            col_value = (col_value >> stride) + temp
+
+
+            col_value = (col_value + 256 - left_key[col])%256
 
             # Redistribute
             mask = 0xFF>>(col+1)
@@ -42,25 +113,6 @@ def feistelFunc(block, left_key, right_key):
                 block[row] = block[row]&mask
                 bit_value = ((col_value<<row)&0x80)>>col
                 block[row] = block[row] + (bit_value)
-
-        
-        # Switch row
-        temp = block[0]
-        for i in range(1,len(block)):
-            block[i-1] = block[i]
-        block[len(block)-1] = temp
-
-
-def inverseFeistelFunc(block, left_key, right_key) :
-
-
-    for _ in range(len(block)):
-
-        # Switch row
-        temp = block[len(block)-1]
-        for row in range(len(block)-1,0,-1):
-            block[row] = block[row-1]
-        block[0] = temp
 
 
         # Do row addition and wrapping shift
@@ -81,6 +133,9 @@ def inverseFeistelFunc(block, left_key, right_key) :
             block[i] = block[i]^old_value[i-1]
 
 
+    print(block)
+
+
 def main():
 
     block = bytearray("12345679","ascii")
@@ -94,12 +149,7 @@ def main():
         left_key = input("Input left key : ")
 
     feistelFunc(block, left_key, right_key)
-
-    print(block)
-    print("===================")
+    print("==========================")
     inverseFeistelFunc(block, left_key, right_key)
-
-    print(block)
-
 
 main()
