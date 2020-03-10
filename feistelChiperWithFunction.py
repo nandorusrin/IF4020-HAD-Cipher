@@ -141,11 +141,11 @@ if __name__ == '__main__':
 
     ciphertext = cipherMachine.encrypt_message(message)
     print("The encrypted message is: ")
-    print(ciphertext)
+    print(ciphertext.decode("raw_unicode_escape"))
     print("==========================================================")
     plaintext = cipherMachine.decrypt_cipher(ciphertext)
     print("The decrypted message is: ")
-    print(plaintext)
+    print(plaintext.decode("raw_unicode_escape"))
     print()
         
         
