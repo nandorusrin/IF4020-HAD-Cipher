@@ -1,24 +1,31 @@
 # 8-byte length left_key, right_key and input length
 # Return 8-byte string
+
+
+def rowAdditionAndShift(block, right_key) :
+
+    for i in range(0,len(block)) :
+        block[i] = (block[i] + right_key[i])%256
+        
+        stride = right_key[i]%8
+        mask = 0xFF >> (8-stride)
+        temp = (block[i]&mask) << (8-stride)
+        block[i] = (block[i] >> stride) + temp
+
+def cascadingXOR(block) :
+    for row in range(1,len(block)) :
+        block[row] = block[row-1]^block[row]
+
 def feistelFunc(block, left_key, right_key):
 
 
     for _ in range(len(block)):
-        print(block)
 
         # Cascading XOR
-        for i in range(1,len(block)):
-            block[i] = block[i-1]^block[i]
+        cascadingXOR(block)
     
         # Do row addition and wrapping shift
-        for i in range(0,len(block)):
-            block[i] = (block[i] + right_key[i])% 256
-
-
-            stride = right_key[i]%8
-            mask = 0xFF >> (8-stride)
-            temp = (block[i]&mask) << (8-stride)
-            block[i] = (block[i] >> stride) + temp
+        rowAdditionAndShift(block, right_key)
 
         # Column confusion
         for col in range(0,1):
