@@ -1,4 +1,5 @@
 from feistelFunction import FeistelFunction
+import sampleText
 # def xor_function(a,b):
 #     return a^b
 
@@ -122,10 +123,7 @@ class FeistelNetwork:
         
         return plaintext
         
-        
-        
-
-        
+            
 if __name__ == '__main__':
 
 
@@ -133,17 +131,12 @@ if __name__ == '__main__':
 
     function_class = FeistelFunction()
 
-    message = bytearray("THIS MESSAGE WILL BE ENCRYPTED","ascii")
-    cipherMachine = FeistelNetwork(key=bytearray('asdfghjkqwertyui',"ascii"),f_function = function_class )
+    message = bytearray(sampleText.english_text,"raw_unicode_escape")
+    cipherMachine = FeistelNetwork(key=bytearray('csdfghjkrwertyuj',"raw_unicode_escape"),f_function = function_class )
     
-    
-    
-    for i in cipherMachine.internal_key:
-        print(i)
-        print(len(i))
     
     print("The plain text is: ")
-    print(message)
+    print(message.decode("raw_unicode_escape"))
     print()
 
     ciphertext = cipherMachine.encrypt_message(message)
