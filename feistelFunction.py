@@ -138,23 +138,23 @@ class FeistelFunction :
             self.__inverseRowConfusion(block,right_key)
             self.__inverseCascadingXOR(block)
 
-def main():
+# def main():
 
-    block = bytearray("qwertoui","ascii")
-    right_key = bytearray("bCf5g1h/","ascii")
-    left_key = bytearray("hg2d7I1_","ascii")
+#     block = bytearray("qwertoui","ascii")
+#     right_key = bytearray("bCf5g1h/","ascii")
+#     left_key = bytearray("hg2d7I1_","ascii")
 
-    while (len(block)!=8) or (len(right_key)!=8) or (len(left_key)!=8) :
-        print("Input all must be 8 characters")
-        block = input("Input block : ")
-        right_key = input("Input right key : ")
-        left_key = input("Input left key : ")
+#     while (len(block)!=8) or (len(right_key)!=8) or (len(left_key)!=8) :
+#         print("Input all must be 8 characters")
+#         block = input("Input block : ")
+#         right_key = input("Input right key : ")
+#         left_key = input("Input left key : ")
 
-    feistelF  = FeistelFunction()
-    feistelF.feistelFunc(block, left_key, right_key)
-    print(block)
-    print("==========================")
-    feistelF.inverseFeistelFunc(block, left_key, right_key)
-    print(block)
+#     feistelF  = FeistelFunction()
+#     feistelF.feistelFunc(block, left_key, right_key)
+#     print(block)
+#     print("==========================")
+#     feistelF.inverseFeistelFunc(block, left_key, right_key)
+#     print(block)
 
-main()
+# main()
